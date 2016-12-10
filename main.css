@@ -4,7 +4,5 @@
 }
 
 #draw-canvas {
-  width: 960px;
-  height: 540px;
   border: solid 1px black;
 }

@@ -33,10 +33,16 @@ function publish() {
     }
 };
 
+
+
 var canvas = document.getElementById("draw-canvas");
+var context = canvas.getContext("2d");
 var drawMode = false;
-function handleMouseDown() {
+
+function handleMouseDown(event) {
   drawMode = true;
+  context.beginPath();
+  context.moveTo(event.offsetX, event.offsetY);
 }
 
 function handleMouseUp() {
@@ -45,10 +51,24 @@ function handleMouseUp() {
 
 function handleMouseMove(event) {
   if(drawMode) {
-    console.log(event.x);
+    context.lineTo(event.offsetX, event.offsetY);
+		context.stroke();
+  }
+}
+
+function handleMouseIn(event) {
+  if(drawMode) {
+    context.moveTo(event.offsetX, event.offsetY);
+  }
+}
+
+function handleMouseOut(event) {
+  if(drawMode) {
+
   }
 }
 
 canvas.onmousedown = handleMouseDown;
 canvas.onmouseup = handleMouseUp;
 canvas.onmousemove = handleMouseMove;
+canvas.onmouseenter= handleMouseIn;
