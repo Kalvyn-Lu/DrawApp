@@ -1,0 +1,10 @@
+.app-container {
+  width: 100%;
+  text-align: center;
+}
+
+#draw-canvas {
+  width: 960px;
+  height: 540px;
+  border: solid 1px black;
+}
