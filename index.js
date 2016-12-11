@@ -1,4 +1,9 @@
-function publish() {
+const drawChannel = "draw";
+var drawList = [];
+
+var pubnub;
+
+function pubnubInit() {
 
     pubnub = PUBNUB({
         publish_key : 'pub-c-7010b7c4-2580-49dc-af52-85e98b12ce23',
@@ -33,7 +38,7 @@ function publish() {
     }
 };
 
-
+pubnubInit();
 
 var canvas = document.getElementById("draw-canvas");
 var context = canvas.getContext("2d");
@@ -47,12 +52,15 @@ function handleMouseDown(event) {
 
 function handleMouseUp() {
   drawMode = false;
+  context.stroke();
+  sendDraw();
 }
 
 function handleMouseMove(event) {
   if(drawMode) {
     context.lineTo(event.offsetX, event.offsetY);
 		context.stroke();
+    drawList.push([event.offsetX, event.offsetY]);
   }
 }
 
@@ -64,7 +72,7 @@ function handleMouseIn(event) {
 
 function handleMouseOut(event) {
   if(drawMode) {
-
+    sendDraw();
   }
 }
 
@@ -72,3 +80,42 @@ canvas.onmousedown = handleMouseDown;
 canvas.onmouseup = handleMouseUp;
 canvas.onmousemove = handleMouseMove;
 canvas.onmouseenter= handleMouseIn;
+
+//Handling the drawing events
+var peerContext = canvas.getContext("2d");
+
+pubnub.subscribe({
+  channel: drawChannel,
+  message : handleDrawReceive
+});
+
+function handleDrawReceive(message, envelope, channelOrGroup, time, channel) {
+  drawFromList(message);
+}
+
+function drawFromList(list) {
+  peerContext.beginPath();
+  peerContext.moveTo(list[0][0],list[0][1]);
+
+  for(var i = 0; i < list.length; i++) {
+    var x = list[i][0];
+    var y = list[i][1];
+    peerContext.lineTo(x,y);
+  }
+
+  peerContext.stroke();
+}
+
+function sendDraw() {
+  pubnub.publish({
+    channel: drawChannel,
+    message: drawList
+  });
+  drawList = [];
+}
+
+var container = document.getElementById("container");
+container.onmouseup = function() {
+  drawMode = false;
+  console.log("gi");
+}
