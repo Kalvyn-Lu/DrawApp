@@ -1,11 +1,16 @@
 const drawChannel = "draw";
+const hexDigits = ['0','1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+const id = Math.floor(Math.random() * 10000)
+
 var drawList = [];
+var color = getRandomColor();
 var pubnub;
 
 var container = document.getElementById("container");
 container.onmouseup = function() {
   drawMode = false;
   sendDraw();
+  context.closePath();
 }
 
 var canvas = document.getElementById("draw-canvas");
@@ -13,7 +18,6 @@ var context = canvas.getContext("2d");
 var drawMode = false;
 
 canvas.onmousedown = handleMouseDown;
-canvas.onmouseup = handleMouseUp;
 canvas.onmousemove = handleMouseMove;
 canvas.onmouseenter= handleMouseIn;
 
@@ -59,21 +63,27 @@ function pubnubInit() {
     });
 };
 
+function getRandomColor() {
+  var color = "#"
+  for(var i = 0; i < 6; i++) {
+    color += hexDigits[Math.floor(Math.random() * 16)];
+  }
+
+  return color;
+}
+
 function handleMouseDown(event) {
   drawMode = true;
   context.beginPath();
   context.moveTo(event.offsetX, event.offsetY);
-}
-
-function handleMouseUp() {
-  drawMode = false;
+  context.strokeStyle = color;
 }
 
 function handleMouseMove(event) {
   if(drawMode) {
     context.lineTo(event.offsetX, event.offsetY);
 		context.stroke();
-    drawList.push([event.offsetX, event.offsetY]);
+    drawList.push([event.offsetX, event.offsetY, color, id]);
   }
 }
 
@@ -91,16 +101,23 @@ function drawFromList(list) {
   if(list.length <= 0) {
     return;
   }
+
+  if(list[0][3] == id) {
+    return;
+  }
+
   context.beginPath();
   context.moveTo(list[0][0],list[0][1]);
 
   for(var i = 0; i < list.length; i++) {
     var x = list[i][0];
     var y = list[i][1];
+    context.strokeStyle = list[i][2];
     context.lineTo(x,y);
   }
 
   context.stroke();
+  context.closePath();
 }
 
 function sendDraw() {
