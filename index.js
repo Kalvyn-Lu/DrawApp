@@ -98,14 +98,16 @@ function handleDrawReceive(message, envelope, channelOrGroup, time, channel) {
   var wasDrawing = drawMode;
   if(wasDrawing) {
     drawMode = false;
+    context.closePath();
   }
-  drawFromList(message);
+  drawFromList(message, wasDrawing);
   if(wasDrawing) {
     drawMode = true;
+    context.beginPath();
   }
 }
 
-function drawFromList(list) {
+function drawFromList(list, wasDrawing) {
   if(list.length <= 0) {
     return;
   }
