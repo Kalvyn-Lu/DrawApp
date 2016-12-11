@@ -52,8 +52,6 @@ function handleMouseDown(event) {
 
 function handleMouseUp() {
   drawMode = false;
-  context.stroke();
-  sendDraw();
 }
 
 function handleMouseMove(event) {
@@ -72,7 +70,6 @@ function handleMouseIn(event) {
 
 function handleMouseOut(event) {
   if(drawMode) {
-    sendDraw();
   }
 }
 
@@ -94,6 +91,9 @@ function handleDrawReceive(message, envelope, channelOrGroup, time, channel) {
 }
 
 function drawFromList(list) {
+  if(list.length <= 0) {
+    return;
+  }
   peerContext.beginPath();
   peerContext.moveTo(list[0][0],list[0][1]);
 
@@ -117,5 +117,5 @@ function sendDraw() {
 var container = document.getElementById("container");
 container.onmouseup = function() {
   drawMode = false;
-  console.log("gi");
+  sendDraw();
 }
