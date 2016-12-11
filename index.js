@@ -77,11 +77,11 @@ function handleMouseDown(event) {
   drawMode = true;
   context.beginPath();
   context.moveTo(event.offsetX, event.offsetY);
-  context.strokeStyle = color;
 }
 
 function handleMouseMove(event) {
   if(drawMode) {
+    context.strokeStyle = color;
     context.lineTo(event.offsetX, event.offsetY);
 		context.stroke();
     drawList.push([event.offsetX, event.offsetY, color, id]);
