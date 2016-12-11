@@ -27,7 +27,8 @@ function pubnubInit() {
 
     pubnub = PUBNUB({
         publish_key : 'pub-c-7010b7c4-2580-49dc-af52-85e98b12ce23',
-        subscribe_key : 'sub-c-f1637de6-bcec-11e6-b07a-0619f8945a4f'
+        subscribe_key : 'sub-c-f1637de6-bcec-11e6-b07a-0619f8945a4f',
+        ssl: (location.protocol.toLowerCase() === 'https:')
     })
 
     console.log("Subscribing..");
