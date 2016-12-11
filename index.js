@@ -95,7 +95,14 @@ function handleMouseIn(event) {
 }
 
 function handleDrawReceive(message, envelope, channelOrGroup, time, channel) {
+  var wasDrawing = drawMode;
+  if(wasDrawing) {
+    drawMode = false;
+  }
   drawFromList(message);
+  if(wasDrawing) {
+    drawMode = true;
+  }
 }
 
 function drawFromList(list) {
