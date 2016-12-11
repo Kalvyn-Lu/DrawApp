@@ -3,6 +3,24 @@ var drawList = [];
 
 var pubnub;
 
+var container = document.getElementById("container");
+container.onmouseup = function() {
+  drawMode = false;
+  sendDraw();
+}
+
+var canvas = document.getElementById("draw-canvas");
+var context = canvas.getContext("2d");
+var drawMode = false;
+
+canvas.onmousedown = handleMouseDown;
+canvas.onmouseup = handleMouseUp;
+canvas.onmousemove = handleMouseMove;
+canvas.onmouseenter= handleMouseIn;
+
+
+pubnubInit();
+
 function pubnubInit() {
 
     pubnub = PUBNUB({
@@ -36,13 +54,12 @@ function pubnubInit() {
             }
         })
     }
+
+    pubnub.subscribe({
+      channel: drawChannel,
+      message : handleDrawReceive
+    });
 };
-
-pubnubInit();
-
-var canvas = document.getElementById("draw-canvas");
-var context = canvas.getContext("2d");
-var drawMode = false;
 
 function handleMouseDown(event) {
   drawMode = true;
@@ -73,19 +90,6 @@ function handleMouseOut(event) {
   }
 }
 
-canvas.onmousedown = handleMouseDown;
-canvas.onmouseup = handleMouseUp;
-canvas.onmousemove = handleMouseMove;
-canvas.onmouseenter= handleMouseIn;
-
-//Handling the drawing events
-var peerContext = canvas.getContext("2d");
-
-pubnub.subscribe({
-  channel: drawChannel,
-  message : handleDrawReceive
-});
-
 function handleDrawReceive(message, envelope, channelOrGroup, time, channel) {
   drawFromList(message);
 }
@@ -94,16 +98,16 @@ function drawFromList(list) {
   if(list.length <= 0) {
     return;
   }
-  peerContext.beginPath();
-  peerContext.moveTo(list[0][0],list[0][1]);
+  context.beginPath();
+  context.moveTo(list[0][0],list[0][1]);
 
   for(var i = 0; i < list.length; i++) {
     var x = list[i][0];
     var y = list[i][1];
-    peerContext.lineTo(x,y);
+    context.lineTo(x,y);
   }
 
-  peerContext.stroke();
+  context.stroke();
 }
 
 function sendDraw() {
@@ -112,10 +116,4 @@ function sendDraw() {
     message: drawList
   });
   drawList = [];
-}
-
-var container = document.getElementById("container");
-container.onmouseup = function() {
-  drawMode = false;
-  sendDraw();
 }
