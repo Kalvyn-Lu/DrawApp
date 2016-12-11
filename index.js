@@ -1,6 +1,5 @@
 const drawChannel = "draw";
 var drawList = [];
-
 var pubnub;
 
 var container = document.getElementById("container");
@@ -17,7 +16,6 @@ canvas.onmousedown = handleMouseDown;
 canvas.onmouseup = handleMouseUp;
 canvas.onmousemove = handleMouseMove;
 canvas.onmouseenter= handleMouseIn;
-
 
 pubnubInit();
 
@@ -82,11 +80,6 @@ function handleMouseMove(event) {
 function handleMouseIn(event) {
   if(drawMode) {
     context.moveTo(event.offsetX, event.offsetY);
-  }
-}
-
-function handleMouseOut(event) {
-  if(drawMode) {
   }
 }
 
